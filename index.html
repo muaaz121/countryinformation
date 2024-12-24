@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Information Finder</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            padding-top: 30px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #004d99;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .input-group input {
+            max-width: 400px;
+            border-radius: 25px;
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        .input-group .btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            background-color: #004d99;
+            color: white;
+            border: none;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .input-group .btn:hover {
+            background-color: #003366;
+        }
+
+        .country-card {
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .country-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        .country-card h4 {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .country-card p {
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+
+        .btn-info {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-info:hover {
+            background-color: #218838;
+        }
+
+        .more-details {
+            display: none;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .more-details p {
+            font-size: 1rem;
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .more-details p strong {
+            color: #004d99;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .country-card .more-details p {
+            margin-bottom: 10px;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            margin-bottom: 30px;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .navbar-nav .nav-link {
+            color: #fff !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f8f9fa !important;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #004d99;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="#">Country Info Finder</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Country Information Finder</h1>
+
+    <!-- Search Bar -->
+    <div class="input-group">
+        <input type="text" id="search-country" class="form-control" placeholder="Search for a country...">
+        <button class="btn btn-primary" onclick="fetchCountryData()">Search</button>
+    </div>
+
+    <!-- Country Cards -->
+    <div id="country-container" class="row">
+        <!-- Country cards will appear here -->
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Country Info Finder | All Rights Reserved</p>
+</footer>
+
+<script>
+    async function fetchCountryData() {
+        const countryName = document.getElementById('search-country').value.trim();
+        if (countryName === "") return;
+
+        document.getElementById('country-container').innerHTML = '';
+
+        try {
+            const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
+            const data = await response.json();
+
+            if (!data || data.length === 0) {
+                alert("Country not found");
+                return;
+            }
+
+            data.forEach(country => {
+                const countryCard = document.createElement('div');
+                countryCard.classList.add('country-card');
+
+                const flagImage = country.flags ? `<img src="${country.flags.png}" alt="Flag of ${country.name.common}">` : '';
+                const countryInfo = `
+                    <h4>${country.name.common}</h4>
+                    <p><strong>Capital:</strong> ${country.capital ? country.capital[0] : 'N/A'}</p>
+                    <p><strong>Region:</strong> ${country.region ? country.region : 'N/A'}</p>
+                    <p><strong>Subregion:</strong> ${country.subregion ? country.subregion : 'N/A'}</p>
+                    <button class="btn-info" onclick="showMoreDetails('${country.name.common}', '${country.capital ? country.capital[0] : ''}')">More Details</button>
+                    <div id="${country.name.common}-more-details" class="more-details"></div>
+                `;
+
+                countryCard.innerHTML = flagImage + countryInfo;
+                document.getElementById('country-container').appendChild(countryCard);
+            });
+
+        } catch (error) {
+            console.error("Error fetching country data: ", error);
+            alert("Error fetching country data. Please try again later.");
+        }
+    }
+
+    async function showMoreDetails(countryName, capital) {
+        try {
+            const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`);
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                const country = data[0];
+                const moreDetails = document.getElementById(`${countryName}-more-details`);
+                moreDetails.innerHTML = `
+                    <p><strong>Area:</strong> ${country.area ? country.area : 'N/A'} km²</p>
+                    <p><strong>Languages:</strong> ${country.languages ? Object.values(country.languages).join(', ') : 'N/A'}</p>
+                    <p><strong>Currencies:</strong> ${country.currencies ? Object.values(country.currencies).map(currency => currency.name).join(', ') : 'N/A'}</p>
+                    <p><strong>Timezones:</strong> ${country.timezones ? country.timezones.join(', ') : 'N/A'}</p>
+                    <p><strong>Borders:</strong> ${country.borders ? country.borders.join(', ') : 'No borders'}</p>
+                `;
+
+                if (capital) {
+                    const weatherData = await fetchWeather(capital);
+                    if (weatherData) {
+                        moreDetails.innerHTML += `
+                            <p><strong>Weather in ${capital}:</strong></p>
+                            <p>Temperature: ${weatherData.temp}°C</p>
+                            <p>Condition: ${weatherData.description}</p>
+                            <p>Humidity: ${weatherData.humidity}%</p>
+                            <p>Wind Speed: ${weatherData.wind_speed} m/s</p>
+                        `;
+                    } else {
+                        moreDetails.innerHTML += `<p><strong>Weather:</strong> Unable to fetch weather data.</p>`;
+                    }
+                } else {
+                    moreDetails.innerHTML += `<p><strong>Weather:</strong> No capital available to fetch weather data.</p>`;
+                }
+
+                moreDetails.style.display = 'block';
+            }
+        } catch (error) {
+            console.error("Error fetching more details: ", error);
+            alert("Error fetching more details. Please try again later.");
+        }
+    }
+
+    async function fetchWeather(city) {
+        const apiKey = '7a3738241c288288263bf875c99d95eb';
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (response.ok) {
+                return {
+                    temp: data.main.temp,
+                    description: data.weather[0].description,
+                    humidity: data.main.humidity,
+                    wind_speed: data.wind.speed
+                };
+            } else {
+                console.error(`Weather API error: ${data.message}`);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching weather data: ", error);
+            return null;
+        }
+    }
+</script>
+
+</body>
+</html>
